@@ -65,7 +65,7 @@ func getProducts() []*Product {
 	return products
 }
 
-// process transaction and change status
+// process product and change status
 func processProduct(product *Product) {
 	time.Sleep(time.Duration(1 * time.Second)) //simulate delay
 	fmt.Printf("Process product: %s\n", product.ID)
