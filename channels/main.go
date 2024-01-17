@@ -13,20 +13,30 @@ func main() {
 	http.ListenAndServe(":3000", nil)
 }
 
+// get product list and notify each product on email
 func notify(w http.ResponseWriter, r *http.Request) {
-	productChannel := make(chan Product)
+	emailProductChannel := make(chan Product)
+	smsProductChannel := make(chan Product)
+	eventProductChannel := make(chan Product)
 
 	//get product
-	go getProducts(productChannel)
+	go getProducts(emailProductChannel, smsProductChannel, eventProductChannel)
 
 	//notifications
-	go emailNotify(productChannel)
-	go smsNotify(productChannel)
-	go eventNotify(productChannel)
+	go emailNotify(emailProductChannel)
+	go smsNotify(smsProductChannel)
+	go eventNotify(eventProductChannel)
 }
 
+/*
+getProducts: info -> channel
+emailNotify: channel -> info
+smsNotify: channel -> info
+eventNotify: channel -> info
+*/
+
 // get products and put it on channel
-func getProducts(productChannel chan<- Product) {
+func getProducts(emailProductChannel, smsProductChannel, eventProductChannel chan<- Product) {
 	//get random number of product
 	for id := 0; id < 1000; id++ {
 		product := Product{
@@ -35,15 +45,19 @@ func getProducts(productChannel chan<- Product) {
 		fmt.Printf("Get product: %s\n", product.ID)
 		time.Sleep(1 * time.Second) //simulate delay
 
-		productChannel <- product
+		emailProductChannel <- product
+		smsProductChannel <- product
+		eventProductChannel <- product
 	}
 	//close channel
-	close(productChannel)
+	close(emailProductChannel)
+	close(smsProductChannel)
+	close(eventProductChannel)
 }
 
 // email notification by channel
-func emailNotify(productChannel <-chan Product) {
-	for product := range productChannel {
+func emailNotify(emailProductChannel <-chan Product) {
+	for product := range emailProductChannel {
 		// TODO: implement notification
 		fmt.Printf("Email notification product: %s\n", product.ID)
 		time.Sleep(1 * time.Second) //simulate delay
@@ -51,8 +65,8 @@ func emailNotify(productChannel <-chan Product) {
 }
 
 // sms notification by channel
-func smsNotify(productChannel <-chan Product) {
-	for product := range productChannel {
+func smsNotify(eventProductChannel <-chan Product) {
+	for product := range eventProductChannel {
 		// TODO: implement notification
 		fmt.Printf("SMS notification product: %s\n", product.ID)
 		time.Sleep(1 * time.Second) //simulate delay

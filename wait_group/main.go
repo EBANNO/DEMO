@@ -12,11 +12,25 @@ import (
 
 func main() {
 	//start http server
-	http.HandleFunc("/migrate", migrate)
+	http.HandleFunc("/migrate", migrate_v1)
 	http.ListenAndServe(":3000", nil)
 }
 
-func migrate(w http.ResponseWriter, r *http.Request) {
+// get product list and process each product
+func migrate_v1(w http.ResponseWriter, r *http.Request) {
+	//get products
+	products := getProducts()
+	for _, product := range products {
+		//process product
+		processProduct(product)
+	}
+
+	//return response
+	response, _ := json.Marshal(products)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(response)
+}
+func migrate_v2(w http.ResponseWriter, r *http.Request) {
 	//create wait group
 	wg := sync.WaitGroup{}
 
@@ -47,6 +61,7 @@ func getProducts() []*Product {
 			ID: strconv.Itoa(id),
 		})
 	}
+	time.Sleep(time.Duration(1 * time.Second)) //simulate delay
 	return products
 }
 
