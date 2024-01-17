@@ -17,6 +17,13 @@
             "request": "launch",
             "mode": "debug",
             "program": "wait_group/main.go"
+        },
+        {
+            "name": "Test with wait_group",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "wait_group/test/usecase_test.go"
         }
     ]
 }
