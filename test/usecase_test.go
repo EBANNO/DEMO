@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/EBANNO/DEMO/wait_group/test/mocks"
+	"github.com/EBANNO/DEMO/test/mocks"
 	"github.com/stretchr/testify/mock"
 )
 
